@@ -1,0 +1,46 @@
+
+@startuml
+
+skinparam componentStyle rectangle
+package view {
+  [ConsoleApplication] ..> [Command]
+  [ConsoleApplication] ..> [Input]
+  [ConsoleApplication] ..> [Output]
+
+}
+
+package  model{
+' Relações de Coesão
+  [Multiplayer] ..> [Game]
+  [Game] .d.> [Board]
+  [Game] ..> [Points]
+  [Game] ..> [Player]
+  [Board] ..> [Player]
+  [Board] ..> [Pieces]
+  [Board] ..> [Square]
+}
+
+package storage{
+[Mongo] ..> [BoardSerializer]
+[Mongo] ..> [GameSerializer]
+}
+
+package properties {
+[Config]
+}
+
+' Relações de Acoplamento
+[Main] --> [ConsoleApplication]
+[Command] -up-> [Multiplayer]
+[Output] --> [Game]
+[Output] --> [Board]
+[Output] -up-> [Multiplayer]
+[Config] <-- model
+[Game] <-- [GameSerializer]
+[Board] <-- [BoardSerializer]
+[Mongo] <-- [Multiplayer]
+
+
+
+
+@enduml

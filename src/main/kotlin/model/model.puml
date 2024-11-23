@@ -1,0 +1,168 @@
+@startuml
+package model{
+
+  class Board {
+    -moves: Map<Square, Piece>
+    -turn: Player
+    +possiblePlaysData : PossiblePlays
+    +squareToContent(square: Square): Piece
+    +isAdversary(piece: Piece): Boolean
+    +isMyPiece(piece: Piece): Boolean
+    +updatedBoard(changes: List<Pair<Square, Piece>>): BOARD_MAP
+    +equals(other: Any?): Boolean
+    +hashCode(): Int
+    +play(squareFrom: Square, squareTo: Square): Board
+    +playMove(squareFrom: Square, squareTo: Square, turn: Player, middleSquares: List<Square>): Board
+  }
+
+
+  class Square{
+  +row : Row
+  +column : Column
+  +white : Boolean
+  +black :Boolean
+  +Values : List<Square>
+  *Square(row: Row, column: Column): Square
+  *String.toSquare(): Square
+  }
+
+  class Row{
+  -index :Int
+  +digit :Char
+  +Values : List<Row>
+  *Char.toRowOrNull(): Row?
+  }
+
+
+
+  class Column{
+    -index :Int
+    +symbol :Char
+    +Values : List<Column>
+    *Char.toColumnOrNull(): Column?
+
+  }
+
+  object Diagonal {
+  +isDiagonal(squareFrom: Square, squareTo: Square): Boolean
+  +middleSquares(squareFrom: Square, squareTo: Square): List<Square>
+}
+
+  enum Player {
+    WHITE
+    BLACK
+    +other: Player
+    *String.toPlayer() : Player?
+  }
+
+  abstract class Game {
+    -board: Board
+    -points: Points
+    -plays: Int
+    +fun equals(other: Any?): Boolean
+    +hashCode(): Int
+    +play(squareFrom: Square, squareTo: Square): Game
+  }
+
+  class GameRun {
+    *checkWin(newBoard: Board, points: Points): Boolean
+    *checkDraw(newBoard: Board, points: Points): Boolean =
+  }
+
+  class GameWin {
+    +winner: Player
+  }
+
+  class GameDraw
+
+
+  abstract class Piece {
+    -owner: Player?
+    +isBlack: Boolean
+    +isWhite: Boolean
+    +isEmpty: Boolean
+    +isDouble: Boolean
+    +canEat(board: Board, from: Square, to: Square, middleSquares: List<Square>): Boolean
+    +canMove(board: Board, from: Square, to: Square, middleSquares: List<Square>): Boolean
+    +stillCanEat(board: Board, squareFrom: Square, emptySquares: List<Square>): Boolean
+    +boardAfterPlay(board: Board, from: Square, to: Square, middleSquares: List<Square>): BOARD_MAP
+    +equals(other: Any?): Boolean
+  }
+
+  class SinglePiece
+
+  class DoublePiece
+
+  class EmptyPiece
+
+  class Points {
+    -blackPieces: Int
+    -whitePieces: Int
+    +totalBlack: Int
+    +totalWhite: Int
+    +withAddedPoint(player: Player,numberOfPoints: Int): Points
+    +isEqualPoints(): Boolean
+    +pointsOfPlayer(player: Player): Int
+  }
+
+  class Multiplayer {
+    +start(id: Name): Multiplayer
+    +Multiplayer.refresh() : Game
+    +Multiplayer.newBoard() : Game
+    +play(squareFrom: Square, squareTo: Square): Game
+    +delete():Game
+  }
+
+  class MultiplayerRun{
+  game: Game
+  sidePlayer: Player
+  id : Name
+  }
+
+class PossiblePlays<data>{
+-possibleEat: List<Pair<Square, Square>>,
+-possibleMoves: List<Pair<Square, Square>>
+*calculate(board: Board): PossiblePlays
+*emptyPlays(): Boolean
+}
+
+  class Name {
+    -value: String
+  }
+  enum Direction{
+      -rowStep :Int
+      -colStep :Int
+      UP_RIGHT
+      UP_LEFT
+      DOWN_LEFT
+      DOWN_RIGHT
+      +getDirection(squareFrom: Square, squareTo: Square): Direction
+  }
+
+  Board  --> Diagonal
+  Board --> Player
+  Board  -->  Square
+  Piece  <--  Board
+  Points --> Player
+  Player <-- Multiplayer
+  Piece --> Player
+  Piece <|-- SinglePiece
+  Piece <|-- DoublePiece
+  Piece <|-- EmptyPiece
+  Square  -->  Row
+  Square  -->  Column
+  Game  <--  Board
+  Game <|-- GameRun
+  Game <|-- GameWin
+  Game <|-- GameDraw
+  Points <--  Game
+  Name <-- Multiplayer
+  MultiplayerRun  -->  Game
+  Multiplayer <|-- MultiplayerRun
+  Diagonal --> Direction
+  Board <-- PossiblePlays
+  Board --> PossiblePlays
+
+
+}
+@enduml

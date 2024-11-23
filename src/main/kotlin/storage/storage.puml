@@ -1,0 +1,44 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface Serializer<Data> {
+    + serialize(data: Data): String
+    + deserialize(text: String): Data
+}
+
+interface Storage<Key, Data> {
+    + create(key: Key, data: Data)
+    + read(key: Key): Data?
+    + update(key: Key, data: Data)
+    + delete(key: Key)
+}
+
+class GameSerializer {
+    + serialize(data: Game): String
+    + deserialize(text: String): Game
+}
+
+class BoardSerializer {
+    + serialize(data: Board): String
+    + deserialize(text: String): Board
+}
+
+class MongoStorage<Key, Data> {
+    + create(key: Key, data: Data)
+    + read(key: Key): Data?
+    + update(key: Key, data: Data)
+    + delete(key: Key)
+}
+
+
+Storage <|.. MongoStorage
+Serializer <|.. GameSerializer
+Serializer <|.. BoardSerializer
+
+MongoStorage --> Serializer : uses
+GameSerializer --> BoardSerializer : uses
+
+@enduml
+
+
+@enduml
