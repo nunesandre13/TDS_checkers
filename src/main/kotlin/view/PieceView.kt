@@ -1,4 +1,3 @@
-package isel.tds.galo.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -29,7 +28,7 @@ fun PieceView (
             modifier = modifier
         )
         }
-    }
+}
 
 
 

@@ -1,4 +1,4 @@
-package isel.tds.galo.view
+
 
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
