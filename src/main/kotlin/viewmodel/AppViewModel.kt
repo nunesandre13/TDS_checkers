@@ -12,6 +12,7 @@ import model.Name
 import model.Player
 import model.Points
 import model.Square
+import model.deleteGame
 import model.newBoard
 import model.play
 import model.refresh
@@ -38,11 +39,13 @@ class AppViewModel(driver: MongoDriver) {
 
     val board: Board get() = (multiplayer as MultiplayerRun).game.board
 
+    val boardTurn: Player get() = board.turn
+
     val points: Points get() = (multiplayer as MultiplayerRun).game.points
 
     val hasClash: Boolean get() = multiplayer is MultiplayerRun
 
-    val sidePlayer: Player? get() = (multiplayer as? MultiplayerRun)?.sidePlayer
+    val principalPlayer: Player? get() = (multiplayer as? MultiplayerRun)?.principalPlayer
 
     val name: Name get() = (multiplayer as MultiplayerRun).id
 
@@ -77,21 +80,19 @@ class AppViewModel(driver: MongoDriver) {
 
     fun newBoard(): Unit = exec(Multiplayer::newBoard)
 
+    fun deleteGameFromStorage() = exec(Multiplayer::deleteGame)
 
 
-  private fun play() {
-      when (val state = selectedSquares) {
-          is SelectionState.BothSelected -> {
-              val first = state.from
-              val second = state.to
+    private fun play() {
+      if( selectedSquares is SelectionState.BothSelected) {
+              val first = (selectedSquares as SelectionState.BothSelected).from
+              val second = (selectedSquares as SelectionState.BothSelected).to
               multiplayer = multiplayer.play(first, second)
+              getTarget()
               selectedSquares = SelectionState.None
           }
-          else -> {
-              errorMessage = "É necessário selecionar duas casas."
-          }
       }
-    }
+
 
     fun playOrException(){
         try {
@@ -104,7 +105,7 @@ class AppViewModel(driver: MongoDriver) {
 
 
     fun getTarget(){
-        onTarget = !onTarget
+        onTarget = !onTarget && boardTurn == principalPlayer
     }
 
     fun selectSquare(square: Square) {

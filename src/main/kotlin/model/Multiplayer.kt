@@ -1,7 +1,6 @@
 package model
 import properties.Config
 import storage.MongoStorage
-import storage.Storage
 
 
 val MINIMAL_PLAYS_TO_JOIN = Config.minimalPlaysToJoin
@@ -16,15 +15,15 @@ value class Name(private val value: String) {
     }
 }
 
-typealias GameStorage =Storage<Name, Game>    //Storage<Name, Game>
+typealias GameStorage = MongoStorage<Name, Game>    //Storage<Name, Game>
 
 
-open class Multiplayer(val st: GameStorage)
+open class Multiplayer(val st: MongoStorage<Name, Game>)
 
 class MultiplayerRun(
     st: GameStorage,
     val game: Game,
-    val sidePlayer: Player,
+    val principalPlayer: Player,
     val id: Name,
 ) : Multiplayer(st)
 
@@ -59,7 +58,7 @@ fun Multiplayer.start(id: Name): Multiplayer {
 
 private fun Multiplayer.runOperation(operation: MultiplayerRun.()->Game ): Multiplayer {
     check(this is MultiplayerRun) { "Multiplayer not started" }
-    return MultiplayerRun(st,operation(),sidePlayer,id)
+    return MultiplayerRun(st,operation(),principalPlayer,id)
 }
 
 fun Multiplayer.refresh() = runOperation {
@@ -72,7 +71,7 @@ fun Multiplayer.newBoard() = runOperation {
 
 fun Multiplayer.play(squareFrom: Square, squareTo: Square) = runOperation {
     game.play(squareFrom,squareTo).also {
-        check(sidePlayer == (game as GameRun).board.turn) { "Not your turn" }
+        check(principalPlayer == (game as GameRun).board.turn) { "Not your turn" }
         st.update(id,it)
     }
 }

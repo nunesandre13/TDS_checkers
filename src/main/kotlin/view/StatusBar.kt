@@ -20,7 +20,7 @@ import model.Player
 
 
 @Composable
-fun StatusBar(game: Game?, gridWidth:Dp, you: Player?) {
+fun StatusBar(game: Game?, gridWidth:Dp, you : Player?) {
     Row(modifier = Modifier.width(gridWidth)
         .background(Color(0xFFFFE4B5))
         .border(2.dp,Color(0xFFFF4500)),
@@ -33,7 +33,7 @@ fun StatusBar(game: Game?, gridWidth:Dp, you: Player?) {
             is GameWin -> "Winner: " to game.winner
             is GameDraw -> "Draw" to null
         }
-        Text("You ${you ?: "Unknown"}", style = MaterialTheme.typography.h4)
+        Text("You ${you?: "Unknown"}", style = MaterialTheme.typography.h4)
         Spacer(Modifier.width(32.dp))
         val displayText = if (player != null) "$text$player" else text
         Text(displayText, fontSize = 32.sp)

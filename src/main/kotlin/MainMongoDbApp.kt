@@ -52,9 +52,10 @@ private fun FrameWindowScope.GameApp(driver: MongoDriver, onExit: () -> Unit) {
                     Item("OnTarget",enabled = vm.hasClash, onClick = vm::getTarget)
                 }
             }
-            Box(Modifier.fillMaxSize(), Alignment.Center) {
-                DrawGaming(vm,gridWidth)
+                Box(Modifier.fillMaxSize(), Alignment.Center) {
+                    DrawGaming(vm, gridWidth)
                 }
+
             vm.inputName?.let {
                 StartDialog(
                     type = it,
@@ -66,6 +67,7 @@ private fun FrameWindowScope.GameApp(driver: MongoDriver, onExit: () -> Unit) {
         }
     }
 }
+
 
 const val storageDirectory = "checkers"
 

@@ -9,9 +9,6 @@ import androidx.compose.ui.unit.dp
 import model.Square
 import viewmodel.AppViewModel
 
-//@Composable
-
-
 @Composable
 fun modifierSquares(vm: AppViewModel): (Square) -> Modifier {
     val mySquare = mySquare(vm)
