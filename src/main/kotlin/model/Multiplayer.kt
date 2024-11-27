@@ -70,8 +70,8 @@ fun Multiplayer.newBoard() = runOperation {
 }
 
 fun Multiplayer.play(squareFrom: Square, squareTo: Square) = runOperation {
+    check(principalPlayer == (game as GameRun).board.turn) { "Not your turn" }
     game.play(squareFrom,squareTo).also {
-        check(principalPlayer == (game as GameRun).board.turn) { "Not your turn" }
         st.update(id,it)
     }
 }

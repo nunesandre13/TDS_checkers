@@ -11,17 +11,14 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
     google()
 }
 
 dependencies {
-    implementation("org.mongodb:mongodb-driver-kotlin-sync:4.11.0")
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.20.0")
-    implementation("org.jetbrains.compose.desktop:desktop:1.5.0")
-    implementation("org.jetbrains.compose.material:material:1.5.0")
-    implementation("org.jetbrains.compose.ui:ui:1.5.0")
-    implementation("org.jetbrains.compose.ui:ui-tooling-preview:1.5.0")
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.23.1")
+    implementation("org.mongodb:mongodb-driver-kotlin-sync:5.1.2")
+
     // Note, if you develop a library, you should use compose.desktop.common.
     // compose.desktop.currentOs should be used in launcher-sourceSet
     // (in a separate module for demo project and in testMain).
@@ -35,7 +32,7 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "chckers"
+            packageName = "checkers"
             packageVersion = "1.0.0"
         }
     }

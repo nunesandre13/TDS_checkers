@@ -2,9 +2,11 @@ package view
 
 import PointsDialog
 import StatusBar
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import model.MultiplayerRun
 import viewmodel.AppViewModel
 
@@ -22,7 +24,7 @@ fun DrawEmptyGame(vm: AppViewModel,gridWidth: Dp){
     }
 }
 @Composable
-fun DrawGame(vm: AppViewModel,gridWidth: Dp){
+fun DrawGame(vm: AppViewModel ,gridWidth: Dp){
     Column() {
         if (vm.onTarget) BoardView(vm.board, gridWidth, onClickCell = vm::selectSquare, modifierSquares(vm) )
         else  BoardView(vm.board, gridWidth, onClickCell = vm::selectSquare)
@@ -31,3 +33,10 @@ fun DrawGame(vm: AppViewModel,gridWidth: Dp){
         if (vm.viewScore) PointsDialog(vm.points,vm.name, onClose = vm::hideScore)
     }
 }
+
+//
+//@Composable
+//@Preview
+//fun DrawGamePreview() {
+//    DrawGame(AppViewModel(), 500.dp)
+//}

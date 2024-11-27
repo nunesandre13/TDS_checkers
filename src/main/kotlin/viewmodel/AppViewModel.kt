@@ -1,9 +1,9 @@
 package viewmodel
-
 import view.InputName
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.*
 import model.Board
 import model.Game
 import model.Multiplayer
@@ -39,7 +39,7 @@ class AppViewModel(driver: MongoDriver) {
 
     val board: Board get() = (multiplayer as MultiplayerRun).game.board
 
-    val boardTurn: Player get() = board.turn
+    private val boardTurn: Player get() = board.turn
 
     val points: Points get() = (multiplayer as MultiplayerRun).game.points
 
@@ -51,8 +51,10 @@ class AppViewModel(driver: MongoDriver) {
 
     var selectedSquares: SelectionState by mutableStateOf(SelectionState.None)
 
+    var autoRefresh: Boolean by mutableStateOf(false)
+
     sealed class SelectionState {
-        object None : SelectionState()
+        data object None : SelectionState()
         data class FirstSelected(val from: Square) : SelectionState()
         data class BothSelected(val from: Square, val to: Square) : SelectionState()
     }
@@ -76,12 +78,46 @@ class AppViewModel(driver: MongoDriver) {
             errorMessage = e.message
         }
 
+    private fun isMyPiece(square: Square) = principalPlayer == board.moves[square]!!.owner
+
+
     fun refresh() = exec(Multiplayer::refresh)
 
     fun newBoard(): Unit = exec(Multiplayer::newBoard)
 
     fun deleteGameFromStorage() = exec(Multiplayer::deleteGame)
 
+    private var autoRefreshJob: Job? = null
+
+    fun autoRefresh(intervalMillis: Long = 5000) {
+        autoRefreshJob?.cancel()
+        autoRefresh = true
+        // Inicia uma nova coroutine para executar o refresh periodicamente
+        autoRefreshJob = CoroutineScope(Dispatchers.Default).launch {
+            while (isActive) { // Verifica se a coroutine ainda está ativa
+                try {
+                    multiplayer = multiplayer.refresh() // Chama o método de refresh
+                } catch (e: Exception) {
+                   // errorMessage = "Error during auto-refresh: ${e.message}"
+                }
+                delay(intervalMillis) // Espera o intervalo definido
+            }
+        }
+    }
+
+    fun stopAutoRefresh() {
+        autoRefresh = false
+        autoRefreshJob?.cancel() // Cancela a coroutine de auto-refresh
+        autoRefreshJob = null
+    }
+
+    fun startOrEndRefresh(intervalMillis: Long = 5000) {
+        if (autoRefreshJob == null) {
+            autoRefresh(intervalMillis) // Inicia o auto-refresh
+        } else {
+            stopAutoRefresh() // Para o auto-refresh
+        }
+    }
 
     private fun play() {
       if( selectedSquares is SelectionState.BothSelected) {
@@ -109,10 +145,11 @@ class AppViewModel(driver: MongoDriver) {
     }
 
     fun selectSquare(square: Square) {
-        selectedSquares = when (selectedSquares) {
-            is SelectionState.None -> SelectionState.FirstSelected(square)
-            is SelectionState.FirstSelected -> SelectionState.BothSelected((selectedSquares as SelectionState.FirstSelected).from, square)
-            is SelectionState.BothSelected -> SelectionState.None // Resetar seleção
+        selectedSquares = when {
+           selectedSquares is SelectionState.None -> SelectionState.FirstSelected(square)
+            selectedSquares is SelectionState.FirstSelected  && isMyPiece(square) -> SelectionState.FirstSelected(square)
+            selectedSquares is SelectionState.FirstSelected -> SelectionState.BothSelected((selectedSquares as SelectionState.FirstSelected).from, square)
+            else -> SelectionState.None
         }
     }
 

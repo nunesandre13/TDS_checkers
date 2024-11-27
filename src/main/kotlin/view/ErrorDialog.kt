@@ -4,7 +4,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DialogBase(
     title: String,

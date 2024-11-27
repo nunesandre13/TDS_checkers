@@ -13,4 +13,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "chckers"
+rootProject.name = "checkers"

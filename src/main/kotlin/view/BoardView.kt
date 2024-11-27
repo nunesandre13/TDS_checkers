@@ -1,5 +1,6 @@
 package view
 import PieceView
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,8 +19,11 @@ import model.Row
 import model.Square
 
 
+
+
+
 @Composable
-fun BoardView(board: Board?, gridWidth: Dp, onClickCell: (Square) -> Unit,modifierForSquare: ((Square) -> Modifier) = { Modifier} ){
+fun BoardView(board: Board?, gridWidth: Dp, onClickCell: (Square) -> Unit, modifierForSquare: ((Square) -> Modifier) = { Modifier} ){
     val cellSize = calculateCellSize(gridWidth)
     Row {
         DrawRowNumbers(cellSize)
@@ -104,4 +108,10 @@ fun drawPieceInBlackSquare(square: Square,board: Board?,cellSize :Dp,onClickCell
             modifier = Modifier.size(cellSize).background(Color.Black)
         )
     }
+}
+
+@Preview
+@Composable
+fun GridPreview() {
+    DrawBoard(Board(), 500.dp,{})
 }
